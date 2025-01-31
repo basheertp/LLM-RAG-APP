@@ -2,6 +2,8 @@
 
 Useful Command and Links:
 
+Note: Python verison 3.9+
+
 python3 -m venv .venv
 source .venv/bin/activate
 which python
