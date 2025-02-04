@@ -4,6 +4,7 @@ from langchain.text_splitter import CharacterTextSplitter,TokenTextSplitter
 from langchain_community.embeddings import HuggingFaceBgeEmbeddings
 from dotenv import load_dotenv
 import os
+import shutil
 
 load_dotenv()
 
@@ -36,7 +37,19 @@ class RAG:
     
     def populate_vector_db(self) -> None:
         # load embeddings into Chroma - need to pass docs , embedding function and path of the db
-
+        for filename in os.listdir(self.vector_store_path):
+            file_path = os.path.join(self.vector_store_path, filename)
+            try:
+                # If it's a file or a symbolic link, remove it
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.remove(file_path)
+                    print(f"Deleted file: {file_path}")
+                # If it's a directory, remove it and all its contents
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+                    print(f"Deleted directory: {file_path}")
+            except Exception as e:
+                print(f"Failed to delete {file_path}. Reason: {e}")
         self.doc = self.load_docs(self.pdf_folder_path)
         self.documents = self.split_docs(self.doc)
         
